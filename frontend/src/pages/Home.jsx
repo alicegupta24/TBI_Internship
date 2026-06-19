@@ -6,8 +6,6 @@ import Footer from "../components/Footer"
 function Home() {
 return (
 <> <Navbar /> <Hero />
-
-```
   <div className="grid md:grid-cols-2 gap-6 p-6">
     <Card
       title="Review Analysis"
