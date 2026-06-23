@@ -1,21 +1,25 @@
-import { Button, Input, Modal, Toast, Loader } from "../components/ui";
+import { useEffect, useState } from "react";
 
 function Dashboard() {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/reviews")
+      .then((res) => res.json())
+      .then((data) => setReviews(data));
+  }, []);
+
   return (
-    <div className="p-8 space-y-6">
-      <h1 className="text-3xl font-bold">Component Showcase</h1>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Guest Reviews</h1>
 
-      <Input label="Search Reviews" type="text" placeholder="Enter review..." />
-
-      <Button text="Analyze" />
-
-      <Modal title="Sample Modal">
-        <p>This is modal content.</p>
-      </Modal>
-
-      <Toast message="Review analyzed successfully!" />
-
-      <Loader />
+      {reviews.map((review) => (
+        <div key={review.id} className="border p-4 mb-4 rounded shadow">
+          <h2 className="font-bold">{review.guest}</h2>
+          <p>{review.review}</p>
+          <p>Rating: {review.rating}</p>
+        </div>
+      ))}
     </div>
   );
 }
