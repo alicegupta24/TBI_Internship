@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from database import reviews_collection
 
 app = FastAPI()
 
@@ -11,11 +12,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-reviews = [
-    {"id": 1, "guest": "Alice", "review": "Great stay", "rating": 5},
-    {"id": 2, "guest": "Aseem", "review": "Nice food", "rating": 4}
-]
-
 @app.get("/")
 def home():
     return {"message": "StayInsight Backend Running"}
@@ -23,42 +19,49 @@ def home():
 # 1 GET all reviews
 @app.get("/api/reviews")
 def get_reviews():
+    reviews = list(reviews_collection.find({}, {"_id": 0}))
     return reviews
 
 # 2 GET single review
 @app.get("/api/reviews/{review_id}")
 def get_review(review_id: int):
-    for review in reviews:
-        if review["id"] == review_id:
-            return review
+    review = reviews_collection.find_one({"id": review_id}, {"_id": 0})
+    if review:
+        return review
     raise HTTPException(status_code=404, detail="Review not found")
 
 # 3 POST new review
 @app.post("/api/reviews")
 def add_review(review: dict):
-    reviews.append(review)
+    reviews_collection.insert_one(review)
     return {"message": "Review added"}
 
 # 4 PUT update review
 @app.put("/api/reviews/{review_id}")
 def update_review(review_id: int, updated_review: dict):
-    for i in range(len(reviews)):
-        if reviews[i]["id"] == review_id:
-            reviews[i] = updated_review
-            return {"message": "Review updated"}
+    result = reviews_collection.update_one(
+        {"id": review_id},
+        {"$set": updated_review}
+    )
+    if result.modified_count > 0:
+        return {"message": "Review updated"}
     raise HTTPException(status_code=404, detail="Review not found")
 
 # 5 DELETE review
 @app.delete("/api/reviews/{review_id}")
 def delete_review(review_id: int):
-    for i in range(len(reviews)):
-        if reviews[i]["id"] == review_id:
-            reviews.pop(i)
-            return {"message": "Review deleted"}
+    result = reviews_collection.delete_one({"id": review_id})
+    if result.deleted_count > 0:
+        return {"message": "Review deleted"}
     raise HTTPException(status_code=404, detail="Review not found")
 
 # 6 SEARCH review
 @app.get("/api/search")
 def search_reviews(q: str):
-    result = [r for r in reviews if q.lower() in r["review"].lower()]
+    result = list(
+        reviews_collection.find(
+            {"review": {"$regex": q, "$options": "i"}},
+            {"_id": 0}
+        )
+    )
     return result
