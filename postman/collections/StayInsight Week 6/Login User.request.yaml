@@ -1,0 +1,22 @@
+$kind: http-request
+name: Login User
+url: http://127.0.0.1:8000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"alicepostman@gmail.com\",\r
+
+    \  \"password\": \"123456\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const jsonData = pm.response.json();\r
+
+      \r
+
+      pm.environment.set(\"token\", jsonData.access_token);"
+    language: text/javascript
+order: 66491797019789

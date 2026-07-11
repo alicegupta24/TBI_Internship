@@ -1,0 +1,8 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/reviews
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZXBvc3RtYW5AZ21haWwuY29tIiwiZXhwIjoxNzgzNzY2ODc2fQ.3I8j05QwQEkicALiqq7mWGPyl2sb474EHNEy4s2bOjY
+order: 4155722214095891

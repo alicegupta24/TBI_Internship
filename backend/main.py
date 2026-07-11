@@ -1,16 +1,70 @@
+from fastapi import FastAPI, HTTPException, Request
+import time
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from fastapi import Header, Depends
+from jose import jwt
+from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime, timedelta
+from database import reviews_collection, users_collection
+import bcrypt
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from database import reviews_collection
-
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+SECRET_KEY = "stayinsightsecret"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+GOOGLE_CLIENT_ID = "810158019415-rjfg4bnimr82ir1uq47u92u558154puk.apps.googleusercontent.com"
+login_attempts = {}
+register_attempts = {}
+
+MAX_REQUESTS = 5
+WINDOW = 60  # seconds
+def check_rate_limit(client_ip, attempts):
+
+    current_time = time.time()
+
+    if client_ip not in attempts:
+        attempts[client_ip] = []
+
+    attempts[client_ip] = [
+        t for t in attempts[client_ip]
+        if current_time - t < WINDOW
+    ]
+
+    if len(attempts[client_ip]) >= MAX_REQUESTS:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests. Please try again after one minute."
+        )
+
+    attempts[client_ip].append(current_time)
+def verify_token(authorization: str = Header(None)):
+
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="Token missing")
+
+    token = authorization.replace("Bearer ", "")
+
+    try:
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+        return payload
+
+    except:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 @app.get("/")
 def home():
@@ -18,7 +72,7 @@ def home():
 
 # 1 GET all reviews
 @app.get("/api/reviews")
-def get_reviews():
+def get_reviews(user=Depends(verify_token)):
     reviews = list(reviews_collection.find({}, {"_id": 0}))
     return reviews
 
@@ -32,29 +86,94 @@ def get_review(review_id: int):
 
 # 3 POST new review
 @app.post("/api/reviews")
-def add_review(review: dict):
-    reviews_collection.insert_one(review)
-    return {"message": "Review added"}
+def add_review(
+    review: dict,
+    user=Depends(verify_token)
+):
 
+    last_review = reviews_collection.find_one(
+        sort=[("id", -1)]
+    )
+
+    new_id = 1
+
+    if last_review:
+        new_id = last_review["id"] + 1
+
+    review["id"] = new_id
+
+    # Logged-in user's email
+    review["user_email"] = user["sub"]
+
+    # Date when review was created
+    review["created_at"] = datetime.now().strftime("%d %b %Y")
+
+    reviews_collection.insert_one(review)
+
+    return {
+        "message": "Review added successfully"
+    }
 # 4 PUT update review
 @app.put("/api/reviews/{review_id}")
-def update_review(review_id: int, updated_review: dict):
-    result = reviews_collection.update_one(
-        {"id": review_id},
-        {"$set": updated_review}
-    )
-    if result.modified_count > 0:
-        return {"message": "Review updated"}
-    raise HTTPException(status_code=404, detail="Review not found")
+def update_review(
+    review_id: int,
+    updated_review: dict,
+    user=Depends(verify_token),
+):
 
+    existing_review = reviews_collection.find_one({"id": review_id})
+
+    if not existing_review:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found"
+        )
+
+    if existing_review["user_email"] != user["sub"]:
+        raise HTTPException(
+            status_code=403,
+            detail="You can edit only your own review."
+        )
+
+    reviews_collection.update_one(
+        {"id": review_id},
+        {
+            "$set": {
+                "guest": updated_review["guest"],
+                "review": updated_review["review"],
+                "rating": updated_review["rating"],
+            }
+        }
+    )
+
+    return {
+        "message": "Review updated successfully"
+    }  
 # 5 DELETE review
 @app.delete("/api/reviews/{review_id}")
-def delete_review(review_id: int):
-    result = reviews_collection.delete_one({"id": review_id})
-    if result.deleted_count > 0:
-        return {"message": "Review deleted"}
-    raise HTTPException(status_code=404, detail="Review not found")
+def delete_review(
+    review_id: int,
+    user=Depends(verify_token),
+):
+    existing_review = reviews_collection.find_one({"id": review_id})
 
+    if not existing_review:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found"
+        )
+
+    if existing_review["user_email"] != user["sub"]:
+        raise HTTPException(
+            status_code=403,
+            detail="You can delete only your own review."
+        )
+
+    reviews_collection.delete_one({"id": review_id})
+
+    return {
+        "message": "Review deleted successfully"
+    }
 # 6 SEARCH review
 @app.get("/api/search")
 def search_reviews(q: str):
@@ -65,3 +184,162 @@ def search_reviews(q: str):
         )
     )
     return result
+
+# 7 REGISTER USER
+@app.post("/api/auth/register")
+def register(request: Request, user: dict):
+    client_ip = request.client.host
+    check_rate_limit(client_ip, register_attempts)
+    email = user.get("email", "").strip()
+    password = user.get("password", "").strip()
+
+    if not email:
+        raise HTTPException(
+            status_code=400,
+            detail="Email is required"
+        )
+
+    if "@" not in email or "." not in email:
+        raise HTTPException(
+            status_code=400,
+            detail="Enter a valid email"
+        )
+
+    if len(password) < 6:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at least 6 characters"
+        )
+
+    existing_user = users_collection.find_one({"email": email})
+
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Email already registered"
+        )
+
+    hashed_password = bcrypt.hashpw(
+        password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
+
+    users_collection.insert_one({
+        "email": email,
+        "password": hashed_password
+    })
+
+    return {
+        "message": "User registered successfully"
+    }
+# 8 LOGIN USER
+@app.post("/api/auth/login")
+def login(request: Request, user: dict):
+    client_ip = request.client.host
+    check_rate_limit(client_ip, login_attempts)
+
+    email = user.get("email", "").strip()
+    password = user.get("password", "").strip()
+
+    if not email:
+        raise HTTPException(
+            status_code=400,
+            detail="Email is required"
+        )
+
+    if "@" not in email or "." not in email:
+        raise HTTPException(
+            status_code=400,
+            detail="Enter a valid email"
+        )
+
+    if not password:
+        raise HTTPException(
+            status_code=400,
+            detail="Password is required"
+        )
+
+    existing_user = users_collection.find_one({"email": email})
+
+    if not existing_user:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    if not bcrypt.checkpw(
+        password.encode("utf-8"),
+        existing_user["password"].encode("utf-8")
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    expire = datetime.utcnow() + timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+
+    token = jwt.encode(
+        {
+            "sub": email,
+            "exp": expire
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
+#9 google authentication
+@app.post("/api/auth/google")
+def google_login(data: dict):
+
+    token = data.get("credential")
+
+    try:
+        idinfo = id_token.verify_oauth2_token(
+            token,
+            requests.Request(),
+            GOOGLE_CLIENT_ID,
+        )
+
+        email = idinfo["email"]
+        name = idinfo.get("name", email)
+
+        existing_user = users_collection.find_one({"email": email})
+
+        if not existing_user:
+            users_collection.insert_one({
+                "email": email,
+                "password": "",
+                "google_user": True,
+                "name": name,
+            })
+
+        expire = datetime.utcnow() + timedelta(
+            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+
+        jwt_token = jwt.encode(
+            {
+                "sub": email,
+                "exp": expire,
+            },
+            SECRET_KEY,
+            algorithm=ALGORITHM,
+        )
+
+        return {
+            "access_token": jwt_token,
+            "email": email,
+            "name": name,
+        }
+
+    except Exception:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid Google token",
+        )

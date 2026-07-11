@@ -1,0 +1,14 @@
+$kind: http-request
+name: Register User
+url: http://127.0.0.1:8000/api/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"alicepostman1@gmail.com\",\r
+
+    \  \"password\": \"123456\"\r
+
+    }"
+order: 1783762717343
