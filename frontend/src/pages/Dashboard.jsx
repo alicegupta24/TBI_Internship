@@ -1,3 +1,4 @@
+import ReactMarkdown from "react-markdown";
 import ReviewModal from "../components/ReviewModal";
 import DashboardCharts from "../components/DashboardCharts";
 import { useEffect, useState } from "react";
@@ -18,6 +19,9 @@ import {
 function Dashboard({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
+  const [summary, setSummary] = useState("");
+  const [loadingSummary, setLoadingSummary] = useState(false);
+ const [summaryTime, setSummaryTime] = useState("");
   const [search, setSearch] = useState("");
   const [selectedReview, setSelectedReview] = useState(null);
   const [editingReview, setEditingReview] = useState(null);
@@ -47,6 +51,37 @@ function Dashboard({ darkMode, setDarkMode }) {
       })
       .catch((err) => console.error(err));
   }
+  async function generateSummary() {
+  const token = localStorage.getItem("token");
+
+  setLoadingSummary(true);
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/ai/summarize",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+    setSummary(data.summary);
+    setSummaryTime(new Date().toLocaleString());
+} else {
+      alert(data.detail || "Failed to generate summary.");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Unable to connect to the server.");
+  } finally {
+    setLoadingSummary(false);
+  }
+}
 useEffect(() => {
   loadReviews();
 }, []);
@@ -86,10 +121,12 @@ useEffect(() => {
   );
 
   const data = await response.json();
-
-  if (response.ok) {
+if (response.ok) {
+    setSummary("");
+    setSummaryTime("");
     loadReviews();
-  } else {
+}
+  else {
     alert(data.detail);
   }
 }
@@ -116,26 +153,35 @@ useEffect(() => {
                 Monitor guest feedback and analyze customer satisfaction.
               </p>
             </div>
-
             <div className="flex gap-4 mt-5 md:mt-0">
 
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition"
-            >
-              + Add Review
-            </button>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition"
+              >
+                + Add Review
+              </button>
+              <button
+                onClick={generateSummary}
+                disabled={loadingSummary}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl shadow-lg transition"
+              >
+                {loadingSummary ? (
+                  <span>⏳ Generating Summary...</span>
+                ) : (
+                  "🤖 AI Summary"
+                )}
+              </button>
 
-            <button
-              onClick={logout}
-              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
+              <button
+                onClick={logout}
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition"
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
 
             </div>
-
           </div>
 
           {/* Statistics Cards */}
@@ -286,10 +332,50 @@ useEffect(() => {
             />
 
           </div>
+ {summary && (
+  <div className="mt-10 mb-10 rounded-3xl border border-purple-200 dark:border-purple-800 bg-gradient-to-br from-white to-purple-50 dark:from-slate-800 dark:to-slate-900 shadow-lg p-8">
 
+    <div className="flex items-center justify-between mb-6">
+
+      <div>
+        <h2 className="text-2xl font-bold text-purple-600">
+          🤖 AI Review Summary
+        </h2>
+
+        <p className="text-gray-500 dark:text-slate-400">
+          Generated using Google Gemini AI
+        </p>
+        {summaryTime && (
+            <p className="text-sm text-gray-400 mt-1">
+              Generated on {summaryTime}
+            </p>
+          )}
+      </div>
+
+      <button
+        onClick={generateSummary}
+        disabled={loadingSummary}
+        className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition"
+      >
+        {loadingSummary ? "⏳ Generating..." : "🔄 Regenerate"}
+      </button>
+
+    </div>
+
+    <div className="max-h-[450px] overflow-y-auto pr-2">
+      <div className="prose prose-lg max-w-none dark:prose-invert">
+        <ReactMarkdown>
+          {summary}
+        </ReactMarkdown>
+      </div>
+    </div>
+
+  </div>
+)}
           {/* Charts */}
 
           <DashboardCharts reviews={reviews} />
+          
 
           {/* Reviews */}
 
@@ -309,14 +395,14 @@ useEffect(() => {
 
                     <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
 
-                      {review.guest.charAt(0).toUpperCase()}
+                      {(review.guest || review.guest_name || "?").charAt(0).toUpperCase()}
 
                     </div>
 
                     <div>
 
                       <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                        {review.guest}
+                        {review.guest || review.guest_name}
                       </h2>
 
                       <p className="text-gray-500 dark:text-slate-400 text-sm">

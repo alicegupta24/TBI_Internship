@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+from google import genai
+import os
 from fastapi import FastAPI, HTTPException, Request
 import time
 from google.oauth2 import id_token
@@ -8,8 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
 from database import reviews_collection, users_collection
 import bcrypt
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+load_dotenv()
+
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -342,4 +348,56 @@ def google_login(data: dict):
         raise HTTPException(
             status_code=401,
             detail="Invalid Google token",
+        )
+@app.post("/api/ai/summarize")
+def summarize_reviews(user=Depends(verify_token)):
+
+    reviews = list(
+        reviews_collection.find({}, {"_id": 0})
+    )
+
+    if not reviews:
+        return {
+            "summary": "No reviews available."
+        }
+
+    review_text = ""
+
+    for review in reviews:
+        review_text += (
+            f"Guest: {review.get('guest', '')}\n"
+            f"Rating: {review.get('rating', '')}\n"
+            f"Review: {review.get('review', '')}\n\n"
+        )
+
+    prompt = f"""
+You are a hotel review analyst.
+
+Analyze these hotel reviews and provide:
+
+1. Overall customer sentiment
+2. Main positive points
+3. Main negative points
+4. Suggestions for improvement
+
+Hotel Reviews:
+
+{review_text}
+"""
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=prompt,
+        )
+
+        return {
+            "summary": response.text
+        }
+
+    except Exception as e:
+        print("Gemini Error:", repr(e))
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
         )
