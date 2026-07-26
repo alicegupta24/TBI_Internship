@@ -26,7 +26,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-SECRET_KEY = "stayinsightsecret"
+SECRET_KEY = os.getenv("JWT_SECRET")
+ADMIN_SECRET = os.getenv("ADMIN_SECRET")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 GOOGLE_CLIENT_ID = "810158019415-rjfg4bnimr82ir1uq47u92u558154puk.apps.googleusercontent.com"
@@ -198,6 +199,7 @@ def register(request: Request, user: dict):
     check_rate_limit(client_ip, register_attempts)
     email = user.get("email", "").strip()
     password = user.get("password", "").strip()
+    admin_code = user.get("admin_code", "").strip()
 
     if not email:
         raise HTTPException(
@@ -224,7 +226,10 @@ def register(request: Request, user: dict):
             status_code=400,
             detail="Email already registered"
         )
+    role = "customer"
 
+    if admin_code == ADMIN_SECRET:
+        role = "admin"
     hashed_password = bcrypt.hashpw(
         password.encode("utf-8"),
         bcrypt.gensalt()
@@ -232,7 +237,8 @@ def register(request: Request, user: dict):
 
     users_collection.insert_one({
         "email": email,
-        "password": hashed_password
+        "password": hashed_password,
+        "role": role
     })
 
     return {
@@ -286,19 +292,22 @@ def login(request: Request, user: dict):
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
+    role = existing_user.get("role", "customer")
+
     token = jwt.encode(
         {
             "sub": email,
+            "role": role,
             "exp": expire
         },
         SECRET_KEY,
         algorithm=ALGORITHM
     )
-
     return {
-        "access_token": token,
-        "token_type": "bearer"
-    }
+    "access_token": token,
+    "token_type": "bearer",
+    "role": role
+}
 #9 google authentication
 @app.post("/api/auth/google")
 def google_login(data: dict):
@@ -401,3 +410,110 @@ Hotel Reviews:
             status_code=500,
             detail=str(e)
         )
+#10admin stat api
+@app.get("/api/admin/stats")
+def get_admin_stats():
+    total_reviews = reviews_collection.count_documents({})
+    total_users = users_collection.count_documents({})
+
+    reviews = list(reviews_collection.find())
+    positive_reviews = sum(1 for r in reviews if r["rating"] >= 4)
+    neutral_reviews = sum(1 for r in reviews if r["rating"] == 3)
+    negative_reviews = sum(1 for r in reviews if r["rating"] <= 2)
+    if total_reviews > 0:
+        average_rating = round(
+            sum(review["rating"] for review in reviews) / total_reviews,
+            2
+        )
+    else:
+        average_rating = 0
+    return {
+    "total_reviews": total_reviews,
+    "average_rating": average_rating,
+    "registered_users": total_users,
+    "positive_reviews": positive_reviews,
+    "neutral_reviews": neutral_reviews,
+    "negative_reviews": negative_reviews,
+}
+@app.get("/api/admin/reviews")
+def get_all_reviews():
+    reviews = list(reviews_collection.find({}, {"_id": 0}))
+
+    return reviews
+
+@app.get("/api/admin/ai-summary")
+def get_ai_summary():
+
+    reviews = list(reviews_collection.find())
+
+    if not reviews:
+        return {
+            "summary": "No reviews available to summarize."
+        }
+
+    review_text = "\n".join([
+        f"Rating: {r['rating']}/5\nReview: {r['review']}"
+        for r in reviews
+    ])
+
+    prompt = f"""
+    You are an AI Hotel Review Analyst.
+
+    Analyze the reviews and respond in this format only:
+
+    🏨 Overall Sentiment
+    (2-3 sentences)
+
+    👍 Strengths
+    • Point 1
+    • Point 2
+    • Point 3
+
+    ⚠ Areas to Improve
+    • Point 1
+    • Point 2
+
+    💡 Recommendations
+    • Point 1
+    • Point 2
+
+    Do NOT use Markdown.
+    Do NOT use ** or *.
+    Keep the response under 120 words.
+
+    Reviews:
+
+    {review_text}
+    """
+    response = client.models.generate_content(
+       model="gemini-flash-latest",
+        contents=prompt
+    )
+
+    return {
+        "summary": response.text
+    }
+@app.delete("/api/admin/reviews/{review_id}")
+def admin_delete_review(
+    review_id: int,
+    user=Depends(verify_token)
+):
+    if user.get("role") != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required."
+        )
+
+    review = reviews_collection.find_one({"id": review_id})
+
+    if not review:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found."
+        )
+
+    reviews_collection.delete_one({"id": review_id})
+
+    return {
+        "message": "Review deleted successfully."
+    }

@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import AdminDashboard from "./pages/AdminDashboard";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Dashboard from "./pages/Dashboard";
@@ -48,6 +48,17 @@ useEffect(() => {
           element={
             <ProtectedRoute>
               <Dashboard
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+           <ProtectedRoute adminOnly={true}>
+              <AdminDashboard
                 darkMode={darkMode}
                 setDarkMode={setDarkMode}
               />

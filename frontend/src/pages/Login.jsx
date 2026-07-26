@@ -16,40 +16,44 @@ function Login({ darkMode, setDarkMode }) {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
 
-      console.log("Status:", response.status);
+        console.log("Status:", response.status);
 
-      const data = await response.json();
+        const data = await response.json();
 
-      console.log("Response:", data);
+        console.log("Response:", data);
 
-      if (response.ok) {
-            localStorage.setItem("token", data.access_token);
+        if (response.ok) {
+          localStorage.setItem("token", data.access_token);
+          localStorage.setItem("email", email);
+          localStorage.setItem("role", data.role);
 
-            // Save logged-in user's email
-            localStorage.setItem("email", email);
-
+          if (data.role === "admin") {
+            navigate("/admin");
+          } else {
             navigate("/dashboard");
+          }
         } else {
-        alert(data.detail);
-      }
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
+          alert(data.detail);
+        }
 
-    setLoading(false);
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+
+      setLoading(false);
   }
 
   return (
