@@ -10,6 +10,7 @@ function Register({ darkMode, setDarkMode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [adminCode, setAdminCode] = useState("");
   const [loading, setLoading] = useState(false);
   async function handleRegister(e) {
   e.preventDefault();
@@ -27,10 +28,11 @@ function Register({ darkMode, setDarkMode }) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
+        body: JSON.stringify({
+          email,
+          password,
+          admin_code: adminCode,
+        }),
     });
 
     const data = await response.json();
@@ -90,6 +92,13 @@ return (
             className="w-full p-3 mb-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Admin Code (Optional)"
+            className="w-full p-3 mb-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={adminCode}
+            onChange={(e) => setAdminCode(e.target.value)}
           />
 
           <button

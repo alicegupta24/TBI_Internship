@@ -24,3 +24,5 @@ db = client[os.getenv("DB_NAME")]
 
 reviews_collection = db["reviews"]
 users_collection = db["users"]
+print("MONGO_URI:", MONGO_URI)
+print("DB_NAME:", os.getenv("DB_NAME"))

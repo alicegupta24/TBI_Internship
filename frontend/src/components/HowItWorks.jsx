@@ -35,7 +35,7 @@ function HowItWorks() {
 
         <div className="text-center">
 
-          <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-3xl md:text-4xl font-bold">
             How StayInsight Works
           </h2>
 

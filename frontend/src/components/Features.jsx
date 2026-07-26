@@ -34,7 +34,7 @@ function Features() {
       <div className="max-w-7xl mx-auto px-6">
 
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">
             Why Choose StayInsight?
           </h2>
 
