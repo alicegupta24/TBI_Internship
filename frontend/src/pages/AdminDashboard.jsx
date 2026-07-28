@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import StatCard from "../components/StatCard";
-
+const API_URL = import.meta.env.VITE_API_URL;
 function AdminDashboard({ darkMode, setDarkMode }) {
  const [stats, setStats] = useState({
   total_reviews: 0,
@@ -38,7 +38,7 @@ const deleteReview = async (id) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-      `http://127.0.0.1:8000/api/admin/reviews/${id}`,
+      `${API_URL}/api/admin/reviews/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -69,7 +69,7 @@ const fetchAISummary = async () => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-      "http://127.0.0.1:8000/api/admin/ai-summary",
+  `${API_URL}/api/admin/ai-summary`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -96,7 +96,7 @@ useEffect(() => {
 
       // Dashboard statistics
       const statsResponse = await fetch(
-        "http://127.0.0.1:8000/api/admin/stats",
+        `${API_URL}/api/admin/ai-summary`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -112,7 +112,7 @@ useEffect(() => {
 
       // Reviews
       const reviewsResponse = await fetch(
-        "http://127.0.0.1:8000/api/admin/reviews",
+        `${API_URL}/api/admin/reviews`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

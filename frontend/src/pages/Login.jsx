@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
+const API_URL = import.meta.env.VITE_API_URL;
 function Login({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ function Login({ darkMode, setDarkMode }) {
     setLoading(true);
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
+        const response = await fetch(`${API_URL}/api/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -122,9 +122,7 @@ function Login({ darkMode, setDarkMode }) {
 <GoogleLogin
   onSuccess={async (credentialResponse) => {
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/auth/google",
-        {
+      const response =await fetch(`${API_URL}/api/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

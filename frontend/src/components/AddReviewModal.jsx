@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
+import { useState } from "react";
+
+const API_URL = import.meta.env.VITE_API_URL;
 function AddReviewModal({ open, onClose, refreshReviews }) {
   const [guest, setGuest] = useState("");
   const [review, setReview] = useState("");
@@ -11,7 +14,7 @@ function AddReviewModal({ open, onClose, refreshReviews }) {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/reviews", {
+      const response = await fetch(`${API_URL}/api/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

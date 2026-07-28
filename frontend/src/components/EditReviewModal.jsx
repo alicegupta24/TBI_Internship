@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
 function EditReviewModal({
   open,
   onClose,
@@ -22,9 +24,9 @@ async function handleUpdate() {
   const token = localStorage.getItem("token");
 
   try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/api/reviews/${review.id}`,
-      {
+   const response = await fetch(
+  `${API_URL}/api/reviews/${review.id}`,
+  {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
