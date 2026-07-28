@@ -15,7 +15,7 @@ import {
   Smile,
   LogOut,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_API_URL;
 function Dashboard({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
@@ -29,43 +29,45 @@ function Dashboard({ darkMode, setDarkMode }) {
   const [showAddModal, setShowAddModal] = useState(false);
   function loadReviews() {
   const token = localStorage.getItem("token");
+function loadReviews() {
+  const token = localStorage.getItem("token");
 
-  fetch("http://127.0.0.1:8000/api/reviews", {
+  fetch(`${API_URL}/api/reviews`, {
     headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          localStorage.removeItem("token");
-          navigate("/login");
-          return null;
-        }
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return null;
+      }
 
-        return res.json();
-      })
-      .then((data) => {
-        if (data) {
-          setReviews(data);
-        }
-      })
-      .catch((err) => console.error(err));
-  }
+      return res.json();
+    })
+    .then((data) => {
+      if (data) {
+        setReviews(data);
+      }
+    })
+    .catch((err) => console.error(err));
+}
   async function generateSummary() {
   const token = localStorage.getItem("token");
 
   setLoadingSummary(true);
 
   try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/ai/summarize",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+   const response = await fetch(
+  `${API_URL}/api/ai/summarize`,
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
     const data = await response.json();
 
@@ -93,11 +95,13 @@ useEffect(() => {
         ).toFixed(1)
       : 0;
 
-  const filteredReviews = reviews.filter(
-    (review) =>
-      review.review.toLowerCase().includes(search.toLowerCase()) ||
-      review.guest.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredReviews = reviews.filter((review) => {
+  const guest = (review.guest || review.guest_name || "").toLowerCase();
+  const text = (review.review || "").toLowerCase();
+  const query = search.toLowerCase();
+
+  return guest.includes(query) || text.includes(query);
+});
 
   function logout() {
     localStorage.removeItem("token");
@@ -111,7 +115,7 @@ useEffect(() => {
   const token = localStorage.getItem("token");
 
   const response = await fetch(
-    `http://127.0.0.1:8000/api/reviews/${id}`,
+    `${API_URL}/api/reviews/${id}`,
     {
       method: "DELETE",
       headers: {
@@ -323,13 +327,7 @@ if (response.ok) {
               size={20}
             />
 
-            <input
-              type="text"
-              placeholder="Search by guest or review..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+           
 
           </div>
  {summary && (
@@ -375,13 +373,35 @@ if (response.ok) {
           {/* Charts */}
 
           <DashboardCharts reviews={reviews} />
-          
+           <input
+              type="text"
+              placeholder="Search by guest or review..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+            />
 
           {/* Reviews */}
 
           <div className="grid md:grid-cols-2 gap-8 mt-10">
 
-            {filteredReviews.map((review) => (
+            {filteredReviews.length === 0 ? (
+
+              <div className="md:col-span-2 bg-white dark:bg-slate-800 rounded-3xl shadow-md p-12 text-center">
+
+                <h3 className="text-2xl font-semibold text-slate-800 dark:text-white">
+                  No reviews found
+                </h3>
+
+                <p className="mt-3 text-gray-500 dark:text-slate-400">
+                  Try searching with a different guest name or keyword.
+                </p>
+
+              </div>
+
+            ) : (
+
+              filteredReviews.map((review) => (
 
               <div
                 key={review.id + review.guest}
@@ -473,7 +493,8 @@ if (response.ok) {
               </div>
               </div>
 
-            ))}
+            ))
+          )}
 
           </div>
 

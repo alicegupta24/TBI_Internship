@@ -1,3 +1,4 @@
+import ErrorBoundary from "./components/ErrorBoundary";
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -22,27 +23,30 @@ useEffect(() => {
   }
 }, [darkMode]);
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 dark:text-white">  
+  <ErrorBoundary>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 dark:text-white">
       <Routes>
 
-          <Route
-            path="/"
-            element={
-              <Home
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-              />
-            }
-          />
-            <Route
-              path="/about"
-              element={
-                <About
-                  darkMode={darkMode}
-                  setDarkMode={setDarkMode}
-                />
-              }
+        <Route
+          path="/"
+          element={
+            <Home
+              darkMode={darkMode}
+              setDarkMode={setDarkMode}
             />
+          }
+        />
+
+        <Route
+          path="/about"
+          element={
+            <About
+              darkMode={darkMode}
+              setDarkMode={setDarkMode}
+            />
+          }
+        />
+
         <Route
           path="/dashboard"
           element={
@@ -54,10 +58,11 @@ useEffect(() => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/admin"
           element={
-           <ProtectedRoute adminOnly={true}>
+            <ProtectedRoute adminOnly={true}>
               <AdminDashboard
                 darkMode={darkMode}
                 setDarkMode={setDarkMode}
@@ -65,6 +70,7 @@ useEffect(() => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/login"
           element={
@@ -74,6 +80,7 @@ useEffect(() => {
             />
           }
         />
+
         <Route
           path="/register"
           element={
@@ -83,10 +90,11 @@ useEffect(() => {
             />
           }
         />
-      </Routes>
 
+      </Routes>
     </div>
-  );
+  </ErrorBoundary>
+);
 }
 
 export default App;
