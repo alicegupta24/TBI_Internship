@@ -27,8 +27,7 @@ function Dashboard({ darkMode, setDarkMode }) {
   const [editingReview, setEditingReview] = useState(null);
   const currentUser = localStorage.getItem("email");
   const [showAddModal, setShowAddModal] = useState(false);
-  function loadReviews() {
-  const token = localStorage.getItem("token");
+
 function loadReviews() {
   const token = localStorage.getItem("token");
 
