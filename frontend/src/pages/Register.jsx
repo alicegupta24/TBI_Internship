@@ -23,17 +23,19 @@ function Register({ darkMode, setDarkMode }) {
   setLoading(true);
 
   try {
-    const API_URL = import.meta.env.VITE_API_URL;
-    const response = await fetch(`${API_URL}/api/auth/register`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-        body: JSON.stringify({
-          email,
-          password,
-          admin_code: adminCode,
-        }),
-    });
+   const API_URL = import.meta.env.VITE_API_URL;
+
+const response = await fetch(`${API_URL}/api/auth/register`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    email,
+    password,
+    admin_code: adminCode,
+  }),
+});
 
     const data = await response.json();
 
