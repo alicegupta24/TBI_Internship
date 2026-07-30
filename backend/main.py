@@ -21,6 +21,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
+        "https://tbi-internship-xbxv-eight.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
