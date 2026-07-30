@@ -105,7 +105,7 @@ useEffect(() => {
       );
 
       const statsData = await statsResponse.json();
-
+      console.log("Stats Response:", statsData);
       if (statsResponse.ok) {
         setStats(statsData);
       }
