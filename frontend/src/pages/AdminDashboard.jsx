@@ -96,7 +96,7 @@ useEffect(() => {
 
       // Dashboard statistics
       const statsResponse = await fetch(
-        `${API_URL}/api/admin/ai-summary`,
+        `${API_URL}/api/admin/stats`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -382,7 +382,7 @@ const chartData = [
               ) : (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="5"
                     className="text-center p-6 text-gray-500"
                   >
                     No matching reviews found.

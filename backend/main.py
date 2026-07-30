@@ -441,12 +441,6 @@ def get_admin_stats():
     "neutral_reviews": neutral_reviews,
     "negative_reviews": negative_reviews,
 }
-@app.get("/api/admin/reviews")
-def get_all_reviews():
-    reviews = list(reviews_collection.find({}, {"_id": 0}))
-
-    return reviews
-
 @app.get("/api/admin/ai-summary")
 def get_ai_summary():
 
@@ -491,14 +485,23 @@ def get_ai_summary():
 
     {review_text}
     """
-    response = client.models.generate_content(
-       model="gemini-flash-latest",
-        contents=prompt
-    )
 
-    return {
-        "summary": response.text
-    }
+    try:
+        response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=prompt,
+        )
+
+        return {
+            "summary": response.text
+        }
+
+    except Exception as e:
+        print("Admin Gemini Error:", repr(e))
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 @app.delete("/api/admin/reviews/{review_id}")
 def admin_delete_review(
     review_id: int,
