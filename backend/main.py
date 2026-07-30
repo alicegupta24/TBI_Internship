@@ -329,11 +329,12 @@ def google_login(data: dict):
 
         if not existing_user:
             users_collection.insert_one({
-                "email": email,
-                "password": "",
-                "google_user": True,
-                "name": name,
-            })
+            "email": email,
+            "password": "",
+            "google_user": True,
+            "name": name,
+            "role": "customer",
+        })
 
         expire = datetime.utcnow() + timedelta(
             minutes=ACCESS_TOKEN_EXPIRE_MINUTES
@@ -348,10 +349,14 @@ def google_login(data: dict):
             algorithm=ALGORITHM,
         )
 
+        role = existing_user.get("role", "customer") if existing_user else "customer"
+
         return {
             "access_token": jwt_token,
+            "token_type": "bearer",
             "email": email,
             "name": name,
+            "role": role,
         }
 
     except Exception:
