@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
-import { useState } from "react";
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 function AddReviewModal({ open, onClose, refreshReviews }) {
