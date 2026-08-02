@@ -97,7 +97,6 @@ useEffect(() => {
       );
 
       const statsData = await statsResponse.json();
-      console.log("Stats Response:", statsData);
       if (statsResponse.ok) {
         setStats(statsData);
       }
@@ -116,8 +115,6 @@ useEffect(() => {
 
       if (reviewsResponse.ok) {
         setReviews(reviewsData);
-        console.log("Reviews Data:", reviewsData);
-        console.log("Chart Data:", chartData);
       }
 
       // AI Summary

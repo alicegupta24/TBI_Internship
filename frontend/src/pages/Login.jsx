@@ -25,11 +25,9 @@ function Login({ darkMode, setDarkMode }) {
           }),
         });
 
-        console.log("Status:", response.status);
 
         const data = await response.json();
 
-        console.log("Response:", data);
 
         if (response.ok) {
           localStorage.setItem("token", data.access_token);

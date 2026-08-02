@@ -45,10 +45,7 @@ function DashboardCharts({ reviews }) {
       value: reviews.filter((r) => r.rating < 4).length,
     },
   ];
-console.log("Sentiment Data:", sentimentData);
   const COLORS = ["#2563eb", "#ef4444"];
-console.log("Reviews in DashboardCharts:", reviews);
-console.log("Sentiment Data:", sentimentData);
   return (
     <div className="grid lg:grid-cols-2 gap-8 mb-12">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-300">
