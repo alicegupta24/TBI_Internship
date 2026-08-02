@@ -112,6 +112,13 @@ GEMINI_API_KEY=your_api_key
 - Demo data is limited to sample hotel reviews.
 
 ---
+## Live Deployment
+
+### Frontend
+https://tbi-internship-xbxv-eight.vercel.app
+
+### Backend
+https://stayinsight-backend.onrender.com
 
 ## Author
 
