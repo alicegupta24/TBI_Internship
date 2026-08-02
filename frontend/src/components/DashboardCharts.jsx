@@ -8,8 +8,8 @@ import {
   PieChart,
   Pie,
   Cell,
+  Legend,
 } from "recharts";
-
 function DashboardCharts({ reviews }) {
 
   const ratingData = [
@@ -78,20 +78,26 @@ console.log("Sentiment Data:", sentimentData);
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
 
-            <Pie
-              data={sentimentData}
-              dataKey="value"
-              outerRadius={100}
-              label
-            >
-              {sentimentData.map((entry, index) => (
-                <Cell
-                  key={index}
-                  fill={COLORS[index]}
-                />
-              ))}
-            </Pie>
-
+           <Pie
+            data={sentimentData}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            label={({ name, percent }) =>
+              `${name} ${(percent * 100).toFixed(0)}%`
+            }
+            outerRadius={100}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {sentimentData.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+            <Legend />
             <Tooltip />
 
           </PieChart>
