@@ -41,7 +41,7 @@ const response = await fetch(`${API_URL}/api/auth/register`, {
 
     if (response.ok) {
       alert("Registration Successful!");
-      navigate("/login");
+      navigate("/dashboard");
     } else {
       alert(data.detail);
     }
@@ -58,16 +58,15 @@ return (
         darkMode={darkMode}
         setDarkMode={setDarkMode}
       />
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100">
-
-      <div className="bg-white shadow-2xl rounded-3xl p-10 w-[420px]">
-
-        <h1 className="text-4xl font-bold text-center text-blue-700">
-          Create Account
+      <div className="min-h-screen flex items-center justify-center
+      bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100
+      dark:from-slate-900 dark:via-slate-800 dark:to-slate-900
+      transition-colors duration-300">
+      <div className="bg-white dark:bg-slate-800 shadow-2xl rounded-3xl p-10 w-[420px] transition-colors duration-300">
+        <h1 className="text-4xl font-bold text-center text-blue-700 dark:text-blue-400">          Create Account
         </h1>
 
-        <p className="text-center text-gray-500 mt-2 mb-8">
-          Join StayInsight
+      <p className="text-center text-gray-500 dark:text-gray-300 mt-2 mb-8">            Join StayInsight
         </p>
 
         <form onSubmit={handleRegister}>
@@ -75,7 +74,11 @@ return (
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 mb-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+           className="w-full p-3 mb-5 border rounded-xl
+          bg-white dark:bg-slate-700
+          text-slate-900 dark:text-white
+          border-gray-300 dark:border-slate-600
+          focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -83,7 +86,11 @@ return (
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-3 mb-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mb-5 border rounded-xl
+            bg-white dark:bg-slate-700
+            text-slate-900 dark:text-white
+            border-gray-300 dark:border-slate-600
+            focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -91,15 +98,22 @@ return (
           <input
             type="password"
             placeholder="Confirm Password"
-            className="w-full p-3 mb-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={confirmPassword}
+          className="w-full p-3 mb-5 border rounded-xl
+          bg-white dark:bg-slate-700
+          text-slate-900 dark:text-white
+          border-gray-300 dark:border-slate-600
+          focus:outline-none focus:ring-2 focus:ring-blue-500"    
+        value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <input
             type="password"
             placeholder="Admin Code (Optional)"
-            className="w-full p-3 mb-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={adminCode}
+            className="w-full p-3 mb-5 border rounded-xl
+            bg-white dark:bg-slate-700
+            text-slate-900 dark:text-white
+            border-gray-300 dark:border-slate-600
+            focus:outline-none focus:ring-2 focus:ring-blue-500"            value={adminCode}
             onChange={(e) => setAdminCode(e.target.value)}
           />
 
@@ -112,12 +126,10 @@ return (
 
         </form>
 
-        <p className="text-center mt-6 text-gray-600">
-          Already have an account?{" "}
+        <p className="text-center mt-6 text-gray-600 dark:text-gray-300">          Already have an account?{" "}
           <span
             onClick={() => navigate("/login")}
-            className="text-blue-600 cursor-pointer font-semibold"
-          >
+            className="text-blue-600 dark:text-blue-400 cursor-pointer font-semibold"          >
             Login
           </span>
         </p>

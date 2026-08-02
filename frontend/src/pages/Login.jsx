@@ -58,15 +58,18 @@ function Login({ darkMode, setDarkMode }) {
         setDarkMode={setDarkMode}
       />
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100">
+      <div className="min-h-screen flex items-center justify-center
+        bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100
+        dark:from-slate-900 dark:via-slate-800 dark:to-slate-900
+        transition-colors duration-300">
 
-        <div className="bg-white shadow-2xl rounded-3xl p-10 w-[420px]">
+        <div className="bg-white dark:bg-slate-800 shadow-2xl rounded-3xl p-10 w-[420px] transition-colors duration-300">
 
-          <h1 className="text-4xl font-bold text-center text-blue-700">
+          <h1 className="text-4xl font-bold text-center text-blue-700 dark:text-blue-400">
             Welcome Back 👋
           </h1>
 
-          <p className="text-center text-gray-500 mt-2 mb-8">
+          <p className="text-center text-gray-500 dark:text-gray-300 mt-2 mb-8">
             Login to StayInsight
           </p>
 
@@ -75,8 +78,11 @@ function Login({ darkMode, setDarkMode }) {
             <input
               type="email"
               placeholder="Email"
-              className="w-full p-3 mb-5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={email}
+             className="w-full p-3 mb-5 border rounded-xl
+            bg-white dark:bg-slate-700
+            text-slate-900 dark:text-white
+            border-gray-300 dark:border-slate-600
+            focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => setEmail(e.target.value)}
             />
 
@@ -85,7 +91,11 @@ function Login({ darkMode, setDarkMode }) {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+               className="w-full p-3 border rounded-xl
+                bg-white dark:bg-slate-700
+                text-slate-900 dark:text-white
+                border-gray-300 dark:border-slate-600
+                focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -93,7 +103,7 @@ function Login({ darkMode, setDarkMode }) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-gray-500"
+                className="absolute right-3 top-3 text-gray-500 dark:text-gray-300"
               >
                 {showPassword ? "🔒" : "👁"}
               </button>
@@ -110,8 +120,8 @@ function Login({ darkMode, setDarkMode }) {
           </form>
           <div className="my-6 flex items-center">
   <div className="flex-grow border-t"></div>
-  <span className="mx-4 text-gray-500">OR</span>
-  <div className="flex-grow border-t"></div>
+<span className="mx-4 text-gray-500 dark:text-gray-300">OR</span>
+<div className="flex-grow border-t border-gray-300 dark:border-slate-600"></div>
 </div>
 
 <GoogleLogin
