@@ -1,7 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { BarChart3, TrendingUp, Search } from "lucide-react";
 
 function Card({ title, description }) {
-
+const navigate = useNavigate();
   const getIcon = () => {
     switch (title) {
       case "Review Analysis":
@@ -33,7 +34,10 @@ function Card({ title, description }) {
         {description}
       </p>
 
-      <button className="mt-6 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700">
+     <button
+        onClick={() => navigate("/about")}
+        className="mt-6 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700"
+      >
         Learn More →
       </button>
 

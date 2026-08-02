@@ -228,8 +228,9 @@ const chartData = [
       </div>
 
       {/* Rating Distribution */}
-        <DashboardCharts reviews={reviews} />
-
+       <div className="mt-10">
+          <DashboardCharts reviews={reviews} />
+        </div>
       {/* AI Review Summary */}
       <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
 
