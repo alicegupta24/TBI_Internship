@@ -198,6 +198,7 @@ def search_reviews(q: str):
 def register(request: Request, user: dict):
     client_ip = request.client.host
     check_rate_limit(client_ip, register_attempts)
+
     email = user.get("email", "").strip()
     password = user.get("password", "").strip()
     admin_code = user.get("admin_code", "").strip()
@@ -227,10 +228,12 @@ def register(request: Request, user: dict):
             status_code=400,
             detail="Email already registered"
         )
+
     role = "customer"
 
     if admin_code == ADMIN_SECRET:
         role = "admin"
+
     hashed_password = bcrypt.hashpw(
         password.encode("utf-8"),
         bcrypt.gensalt()
@@ -242,12 +245,27 @@ def register(request: Request, user: dict):
         "role": role
     })
 
+    expire = datetime.utcnow() + timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+
+    access_token = jwt.encode(
+        {
+            "sub": email,
+            "role": role,
+            "exp": expire
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+
     return {
-    "message": "User registered successfully",
-    "access_token": access_token,
-    "role": role,
-    "email": email
-}
+        "message": "User registered successfully",
+        "access_token": access_token,
+        "token_type": "bearer",
+        "role": role,
+        "email": email
+    }
 # 8 LOGIN USER
 @app.post("/api/auth/login")
 def login(request: Request, user: dict):
