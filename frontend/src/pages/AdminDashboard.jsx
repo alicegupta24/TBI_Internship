@@ -124,6 +124,8 @@ useEffect(() => {
 
       if (reviewsResponse.ok) {
         setReviews(reviewsData);
+        console.log("Reviews Data:", reviewsData);
+        console.log("Chart Data:", chartData);
       }
 
       // AI Summary

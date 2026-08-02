@@ -45,7 +45,7 @@ function DashboardCharts({ reviews }) {
       value: reviews.filter((r) => r.rating < 4).length,
     },
   ];
-
+console.log("Sentiment Data:", sentimentData);
   const COLORS = ["#2563eb", "#ef4444"];
 
   return (
