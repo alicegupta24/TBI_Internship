@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
 function App() {
   const [darkMode, setDarkMode] = useState(
   localStorage.getItem("theme") === "dark"
@@ -23,10 +24,12 @@ useEffect(() => {
   }
 }, [darkMode]);
   return (
-  <ErrorBoundary>
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 dark:text-white">
-      <Routes>
+ <ErrorBoundary>
+  <div className="min-h-screen bg-slate-50 dark:bg-slate-900 dark:text-white">
 
+    <ScrollToTop />
+
+    <Routes>
         <Route
           path="/"
           element={
