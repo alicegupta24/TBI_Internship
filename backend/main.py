@@ -526,3 +526,18 @@ def admin_delete_review(
     return {
         "message": "Review deleted successfully."
     }
+@app.get("/api/admin/reviews")
+def get_all_reviews(
+    user=Depends(verify_token)
+):
+    if user.get("role") != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required."
+        )
+
+    reviews = list(
+        reviews_collection.find({}, {"_id": 0})
+    )
+
+    return reviews
