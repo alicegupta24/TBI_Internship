@@ -76,19 +76,18 @@ console.log("Sentiment Data:", sentimentData);
         <h2 className="text-xl font-semibold mb-6 text-slate-900 dark:text-white">          Review Sentiment
         </h2>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
+        <ResponsiveContainer width="100%" height={350}>
+         <PieChart margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
 
            <Pie
             data={sentimentData}
             cx="50%"
             cy="50%"
+            outerRadius={80}
             labelLine={false}
             label={({ name, percent }) =>
               `${name} ${(percent * 100).toFixed(0)}%`
             }
-            outerRadius={100}
-            fill="#8884d8"
             dataKey="value"
           >
             {sentimentData.map((entry, index) => (
