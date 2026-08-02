@@ -1,12 +1,4 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
+import DashboardCharts from "../components/DashboardCharts";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -236,29 +228,7 @@ const chartData = [
       </div>
 
       {/* Rating Distribution */}
-      <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-
-        <h2 className="text-2xl font-bold mb-6">
-          Rating Distribution
-        </h2>
-
-        <div style={{ width: "100%", height: 300 }}>
-          <ResponsiveContainer>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="rating" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar
-                dataKey="count"
-                fill="#2563eb"
-                radius={[8, 8, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-      </div>
+        <DashboardCharts reviews={reviews} />
 
       {/* AI Review Summary */}
       <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
