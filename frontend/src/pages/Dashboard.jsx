@@ -317,18 +317,7 @@ if (response.ok) {
 
           </div>
 
-          {/* Search */}
-
-          <div className="relative mb-10">
-
-            <Search
-              className="absolute left-4 top-4 text-gray-400 dark:text-slate-500"
-              size={20}
-            />
-
-           
-
-          </div>
+         
  {summary && (
   <div className="mt-10 mb-10 rounded-3xl border border-purple-200 dark:border-purple-800 bg-gradient-to-br from-white to-purple-50 dark:from-slate-800 dark:to-slate-900 shadow-lg p-8">
 
@@ -359,28 +348,38 @@ if (response.ok) {
 
     </div>
 
-    <div className="max-h-[450px] overflow-y-auto pr-2">
-      <div className="prose prose-lg max-w-none dark:prose-invert">
-        <ReactMarkdown>
-          {summary}
-        </ReactMarkdown>
-      </div>
-    </div>
+            <div className="max-h-[450px] overflow-y-auto pr-2">
+              <div className="prose prose-lg max-w-none dark:prose-invert">
+                <ReactMarkdown>
+                  {summary}
+                </ReactMarkdown>
+              </div>
+            </div>
 
-  </div>
-)}
-          {/* Charts */}
+          </div>
+        )}
+              
+        {/* Charts */}
+        <DashboardCharts reviews={reviews} />
 
-          <DashboardCharts reviews={reviews} />
-           <input
-              type="text"
-              placeholder="Search by guest or review..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+        {/* Search */}
+        <div className="relative mb-10">
 
-          {/* Reviews */}
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"
+            size={20}
+          />
+
+          <input
+            type="text"
+            placeholder="Search by guest or review..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+
+        </div>
+ {/* Reviews */}
 
           <div className="grid md:grid-cols-2 gap-8 mt-10">
 
