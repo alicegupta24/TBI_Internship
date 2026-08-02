@@ -243,8 +243,11 @@ def register(request: Request, user: dict):
     })
 
     return {
-        "message": "User registered successfully"
-    }
+    "message": "User registered successfully",
+    "access_token": access_token,
+    "role": role,
+    "email": email
+}
 # 8 LOGIN USER
 @app.post("/api/auth/login")
 def login(request: Request, user: dict):

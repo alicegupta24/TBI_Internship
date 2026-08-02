@@ -39,18 +39,28 @@ const response = await fetch(`${API_URL}/api/auth/register`, {
 
     const data = await response.json();
 
-    if (response.ok) {
-      alert("Registration Successful!");
-      navigate("/dashboard");
-    } else {
-      alert(data.detail);
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Server Error");
-  }
+if (response.ok) {
+  localStorage.setItem("token", data.access_token);
+  localStorage.setItem("email", data.email);
+  localStorage.setItem("role", data.role);
 
-  setLoading(false);
+  alert("Registration Successful!");
+
+  if (data.role === "admin") {
+    navigate("/admin");
+  } else {
+    navigate("/dashboard");
+  }
+} else {
+  alert(data.detail);
+}
+
+} catch (err) {
+  console.error(err);
+  alert("Server Error");
+}
+
+setLoading(false);
 }
 return (
   <>
