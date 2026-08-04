@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { BarChart3, TrendingUp, Search } from "lucide-react";
 
 function Card({ title, description }) {
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const getIcon = () => {
     switch (title) {
       case "Review Analysis":
@@ -20,7 +21,7 @@ const navigate = useNavigate();
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+    <div className="h-full flex flex-col bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
 
       <div className="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-6">
         {getIcon()}
@@ -30,13 +31,13 @@ const navigate = useNavigate();
         {title}
       </h3>
 
-      <p className="mt-4 text-slate-600 dark:text-slate-300 leading-7">
+      <p className="mt-4 text-slate-600 dark:text-slate-300 leading-7 min-h-[90px] flex-grow">
         {description}
       </p>
 
-     <button
+      <button
         onClick={() => navigate("/about")}
-        className="mt-6 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700"
+        className="mt-6 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 transition"
       >
         Learn More →
       </button>

@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import Features from "../components/Features";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
@@ -15,27 +16,65 @@ function Home({ darkMode, setDarkMode }) {
 
       <Hero />
 
-      <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 px-6 py-16">
-        <Card
-          title="Review Analysis"
-          description="Analyze guest reviews with AI-powered insights."
-        />
+      {/* Feature Cards */}
+      <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 px-6 py-20 items-stretch">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card
+            title="Review Analysis"
+            description="Analyze guest reviews with AI-powered insights."
+          />
+        </motion.div>
 
-        <Card
-          title="Trend Dashboard"
-          description="Track customer sentiment and service trends."
-        />
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          <Card
+            title="Trend Dashboard"
+            description="Track customer sentiment and service trends."
+          />
+        </motion.div>
 
-        <Card
-          title="Smart Search"
-          description="Quickly search guest reviews to identify recurring issues."
-        />
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <Card
+            title="Smart Search"
+            description="Quickly search guest reviews to identify recurring issues."
+          />
+        </motion.div>
+
       </div>
 
-      <HowItWorks />
+      {/* How It Works */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <HowItWorks />
+      </motion.div>
 
-      {/* NEW SECTION */}
-      <Features />
+      {/* Features */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <Features />
+      </motion.div>
 
       <Footer />
     </>
