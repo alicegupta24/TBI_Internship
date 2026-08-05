@@ -56,12 +56,11 @@ function DashboardCharts({ reviews }) {
     },
   ];
 
-  // Green, Yellow, Red
   const COLORS = [
-    "#22c55e",
-    "#facc15",
-    "#ef4444",
-  ];
+  "#2563eb", // Blue - Positive
+  "#8b5cf6", // Purple - Neutral
+  "#cbd5e1", // Slate - Negative
+];
 
   return (
     <div className="grid lg:grid-cols-2 gap-8 mb-12">
