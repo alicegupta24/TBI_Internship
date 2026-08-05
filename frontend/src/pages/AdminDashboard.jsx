@@ -143,28 +143,6 @@ const filteredReviews = reviews.filter((review) => {
   return matchesSearch && matchesRating;
 });
 
-const chartData = [
-  {
-    rating: "1★",
-    count: reviews.filter((r) => r.rating === 1).length,
-  },
-  {
-    rating: "2★",
-    count: reviews.filter((r) => r.rating === 2).length,
-  },
-  {
-    rating: "3★",
-    count: reviews.filter((r) => r.rating === 3).length,
-  },
-  {
-    rating: "4★",
-    count: reviews.filter((r) => r.rating === 4).length,
-  },
-  {
-    rating: "5★",
-    count: reviews.filter((r) => r.rating === 5).length,
-  },
-];
   return (
   <>
     <Navbar
@@ -172,16 +150,19 @@ const chartData = [
       setDarkMode={setDarkMode}
     />
 
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-8">
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-8">
       {/* Heading */}
-      <h1 className="text-4xl font-bold mb-2">
-        Admin Dashboard
-      </h1>
+     <div className="mb-10">
 
-      <p className="text-gray-600 dark:text-gray-300 mb-8">
-        Welcome to StayInsight Analytics
-      </p>
+        <h1 className="text-5xl font-extrabold text-slate-900 dark:text-white">
+          Admin Dashboard
+        </h1>
+
+        <p className="mt-3 text-lg text-slate-600 dark:text-slate-300">
+          Monitor reviews, users and AI-powered insights in one place.
+        </p>
+
+      </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -229,17 +210,27 @@ const chartData = [
           <DashboardCharts reviews={reviews} />
         </div>
       {/* AI Review Summary */}
-      <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+      <div className="mt-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200 dark:border-slate-700 p-8">
 
         <div className="flex items-center justify-between mb-4">
 
           <h2 className="text-2xl font-bold">
-            🤖 AI Review Summary
+            <div>
+
+              <h2 className="text-2xl font-bold">
+              🤖 AI Insights
+              </h2>
+
+              <p className="text-gray-500 dark:text-gray-400 mt-1">
+              Powered by Google Gemini
+              </p>
+
+              </div>
           </h2>
 
           <button
             onClick={fetchAISummary}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+            className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 text-white px-5 py-2 rounded-xl shadow-lg transition-all duration-300"
           >
             Regenerate
           </button>
@@ -249,7 +240,15 @@ const chartData = [
         {loadingSummary ? (
 
           <p className="text-gray-500">
-            Generating AI insights...
+            <div className="animate-pulse space-y-3">
+
+              <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded"></div>
+
+              <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-5/6"></div>
+
+              <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-3/4"></div>
+
+              </div>
           </p>
 
         ) : (
@@ -263,7 +262,7 @@ const chartData = [
       </div>
 
       {/* Reviews Table */}
-      <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+      <div className="mt-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200 dark:border-slate-700 p-8">
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
 
@@ -278,7 +277,7 @@ const chartData = [
               placeholder="🔍 Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+             className="px-5 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             <select
@@ -317,51 +316,46 @@ const chartData = [
             </thead>
 
             <tbody>
+        {filteredReviews.length > 0 ? (
+          filteredReviews.map((review) => (
+            <tr
+              key={review.id}
+              className="border-b border-gray-200 dark:border-slate-700 transition-all duration-200 hover:bg-blue-50 dark:hover:bg-slate-700"
+            >
+              <td className="p-3">
+                {review.guest || review.guest_name || "Unknown Guest"}
+              </td>
 
-              {filteredReviews.length > 0 ? (
-                filteredReviews.map((review) => (
-                  <tr
-                    key={review.id}
-                    className="border-b hover:bg-slate-100 dark:hover:bg-slate-700"
-                  >
-                    <td className="p-3">
-                      {review.guest || review.guest_name || "Unknown Guest"}
-                    </td>
+              <td className="p-3">
+                {review.review}
+              </td>
 
-                    <td className="p-3">
-                      {review.review}
-                    </td>
+              <td className="p-3 text-center">
+                {"⭐".repeat(review.rating)}
+              </td>
 
-                    <td className="p-3 text-center">
-                      {"⭐".repeat(review.rating)}
-                    </td>
+              <td className="p-3 text-center">
+                {review.created_at || "-"}
+              </td>
 
-                    <td className="p-3 text-center">
-                      {review.created_at || "-"}
-                    </td>
-                    <td className="p-3 text-center">
-                        <button
-                            onClick={() => deleteReview(review.id)}
-                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
-                        >
-                            Delete
-                        </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="5"
-                    className="text-center p-6 text-gray-500"
-                  >
-                    No matching reviews found.
-                  </td>
-                </tr>
-              )}
-
-            </tbody>
-
+              <td className="p-3 text-center">
+                <button
+                  onClick={() => deleteReview(review.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="5" className="text-center p-6 text-gray-500">
+              No matching reviews found.
+            </td>
+          </tr>
+        )}
+      </tbody>
           </table>
 
         </div>
