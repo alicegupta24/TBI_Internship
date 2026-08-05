@@ -224,13 +224,19 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id
 
 ## Home Page
 
-![Home](Screenshots/home.png)
+![Home](Screenshots/Home.png)
 
 ---
 
 ## Login
 
-![Login](Screenshots/login.png)
+![Login](Screenshots/Login.png)
+
+---
+
+## Register
+
+![Register](Screenshots/Register.png)
 
 ---
 
@@ -242,7 +248,7 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id
 
 ## Admin Dashboard
 
-![Admin](Screenshots/admin-dashboard.png)
+![Admin Dashboard](Screenshots/admin-dashboard.png)
 
 ---
 
