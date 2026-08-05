@@ -221,7 +221,7 @@ GEMINI_API_KEY=your_gemini_api_key
 ### Frontend (.env)
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=https://stayinsight-backend.onrender.com
 VITE_GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
@@ -264,6 +264,16 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id
 
 ![AI Summary](Screenshots/ai-summary.png)
 
+---
+
+# ⚠️ Known Limitations
+
+- The backend is hosted on Render's free tier, so the first request may take 30–60 seconds to respond after inactivity.
+- Google Gemini AI responses depend on API availability and usage limits.
+- Google OAuth requires valid Google Cloud credentials.
+- The application currently supports a single hospitality business and is not yet designed for multi-property management.
+
+---
 # 🌱 Future Improvements
 
 - Export reports as PDF
@@ -272,6 +282,22 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id
 - Hotel management integration
 - Multi-language support
 - Enhanced analytics dashboard
+
+---
+
+# ⚠️ Known Limitations
+
+- The backend is hosted on Render's free tier, so the first request may take 30–60 seconds to respond after inactivity.
+- Google Gemini AI responses depend on API availability and usage limits.
+- Google OAuth requires valid Google Cloud credentials.
+- The application currently supports a single hospitality business and is not yet designed for multi-property management.
+
+---
+# 🙏 Credits & Acknowledgements
+
+This project was developed during the **TBI Internship Program**.
+
+Special thanks to the TBI-GEU mentors for their guidance and support throughout the internship.
 
 ---
 
