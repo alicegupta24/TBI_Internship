@@ -5,7 +5,15 @@ StayInsight is a full-stack web application developed as part of the **TBI Inter
 The application allows users to securely register and log in, submit reviews, edit or delete their own reviews, and view analytics through interactive charts. Administrators have access to a dedicated dashboard with complete review management and AI-generated insights to better understand customer feedback.
 
 ---
+# 🌐 Live Demo
 
+### 🚀 Frontend (Vercel)
+https://tbi-internship-xbxv-eight.vercel.app/
+
+### ⚙️ Backend API (Render)
+https://stayinsight-backend.onrender.com
+
+---
 # ✨ Features
 
 ### 🔐 Authentication
